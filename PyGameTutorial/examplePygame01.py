@@ -10,10 +10,10 @@ win = pygame.display.set_mode((screenWidth, screenHeight))
 pygame.display.set_caption("First Game")
 
 #sprites
-walkRight = [pygame.image.load('R1.png'), pygame.image.load('R2.png'), pygame.image.load('R3.png'), pygame.image.load('R4.png'), pygame.image.load('R5.png'), pygame.image.load('R6.png'), pygame.image.load('R7.png'), pygame.image.load('R8.png'), pygame.image.load('R9.png')]
-walkLeft = [pygame.image.load('L1.png'), pygame.image.load('L2.png'), pygame.image.load('L3.png'), pygame.image.load('L4.png'), pygame.image.load('L5.png'), pygame.image.load('L6.png'), pygame.image.load('L7.png'), pygame.image.load('L8.png'), pygame.image.load('L9.png')]
-bg = pygame.image.load('bg.jpg')
-char = pygame.image.load('standing.png')
+walkRight = [pygame.image.load('Assets/Images/Sprites/R1.png'), pygame.image.load('Assets/Images/Sprites/R2.png'), pygame.image.load('Assets/Images/Sprites/R3.png'), pygame.image.load('Assets/Images/Sprites/R4.png'), pygame.image.load('Assets/Images/Sprites/R5.png'), pygame.image.load('Assets/Images/Sprites/R6.png'), pygame.image.load('Assets/Images/Sprites/R7.png'), pygame.image.load('Assets/Images/Sprites/R8.png'), pygame.image.load('Assets/Images/Sprites/R9.png')]
+walkLeft = [pygame.image.load('Assets/Images/Sprites/L1.png'), pygame.image.load('Assets/Images/Sprites/L2.png'), pygame.image.load('Assets/Images/Sprites/L3.png'), pygame.image.load('Assets/Images/Sprites/L4.png'), pygame.image.load('Assets/Images/Sprites/L5.png'), pygame.image.load('Assets/Images/Sprites/L6.png'), pygame.image.load('Assets/Images/Sprites/L7.png'), pygame.image.load('Assets/Images/Sprites/L8.png'), pygame.image.load('Assets/Images/Sprites/L9.png')]
+bg = pygame.image.load('Assets/Images/bg.jpg')
+char = pygame.image.load('Assets/Images/Sprites/standing.png')
 
 clock = pygame.time.Clock()
 
