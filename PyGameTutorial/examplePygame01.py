@@ -2,7 +2,7 @@ import pygame
 pygame.init() #initializes the pygame module, which is necessary before using any of its functions.
 
 screenWidth = 500
-screenHeight = 500
+screenHeight = 480
 
 #Window size
 #                                  w             h
@@ -15,9 +15,11 @@ walkLeft = [pygame.image.load('L1.png'), pygame.image.load('L2.png'), pygame.ima
 bg = pygame.image.load('bg.jpg')
 char = pygame.image.load('standing.png')
 
+clock = pygame.time.Clock()
+
 #character variables
-starting_x = 50
-starting_y = 10
+starting_x = 10 #left and right
+starting_y = 400 #up and down 
 width = 64 #based on the size of the character sprite
 height = 64 #based on the size of the character sprite
 vel = 5
@@ -32,9 +34,17 @@ WalkCount = 0
 def redrawGameWindow():
     global WalkCount
     
-    win.blit(bg, (0,0))
-    #                       r   g   b   
-    pygame.draw.rect(win, (0, 255, 0), (starting_x, starting_y, width, height))
+    win.blit(bg, (0,0)) 
+    if WalkCount + 1 >= 27:
+        WalkCount = 0
+    if player_left:
+        win.blit(walkLeft[WalkCount//3], (starting_x, starting_y))
+        WalkCount += 1
+    elif player_right:
+        win.blit(walkRight[WalkCount//3], (starting_x, starting_y))
+        WalkCount += 1
+    else:
+        win.blit(char, (starting_x, starting_y))
     pygame.display.update()
 
 
@@ -42,7 +52,7 @@ run = True
 
 #main loop
 while run:
-    pygame.time.delay(100)
+    clock.tick(27) #FPS
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -51,8 +61,16 @@ while run:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT] and starting_x > vel:
         starting_x -= vel
-    if keys[pygame.K_RIGHT] and starting_x < screenWidth - width - vel:
+        player_left = True
+        player_right = False
+    elif keys[pygame.K_RIGHT] and starting_x < screenWidth - width - vel:
         starting_x += vel
+        player_left = False
+        player_right = True
+    else:
+        player_left = False
+        player_right = False
+        WalkCount = 0
     if (not isJump):
         # if keys[pygame.K_UP] and starting_y > vel:
         #     starting_y -= vel
@@ -60,6 +78,9 @@ while run:
         #     starting_y += vel
         if keys[pygame.K_SPACE] and not isJump:
             isJump = True
+            player_right = False
+            player_left = False
+            WalkCount = 0
     else:
         if jumpCount >= -10:
             neg = 1
