@@ -32,7 +32,7 @@ WalkCount = 0
 def redrawGameWindow():
     global WalkCount
     
-    win.fill((0, 0, 0))
+    win.blit(bg, (0,0))
     #                       r   g   b   
     pygame.draw.rect(win, (0, 255, 0), (starting_x, starting_y, width, height))
     pygame.display.update()
@@ -71,4 +71,7 @@ while run:
         else:
             isJump = False
             jumpCount = 10
+
+    #added func
+    redrawGameWindow()
 pygame.quit()
