@@ -17,36 +17,40 @@ char = pygame.image.load('Assets/Images/Sprites/standing.png')
 
 clock = pygame.time.Clock()
 
-#character variables
-starting_x = 10 #left and right
-starting_y = 400 #up and down 
-width = 64 #based on the size of the character sprite
-height = 64 #based on the size of the character sprite
-vel = 5
-#Movement variables
-isJump = False
-jumpCount = 10
-player_left = False
-player_right = False
-WalkCount = 0
+class Player(object):
+    def __init__(self, x, y, width, height):
+        self.x = x #left and right
+        self.y = y #up and down 
+        self.width = width #based on the size of the character sprite
+        self.height = height #based on the size of the character sprite
+
+        self.vel = 5
+        self.isJump = False
+        self.jumpCount = 10
+        self.left = False
+        self.right = False
+        self.walkCount = 0
+
+    def draw(self, win):
+        if self.walkCount + 1 >= 27:
+            self.walkCount = 0
+        if self.left:
+            win.blit(walkLeft[self.walkCount//3], (self.x, self.y))
+            self.walkCount += 1
+        elif self.right:
+            win.blit(walkRight[self.walkCount//3], (self.x, self.y))
+            self.walkCount += 1
+        else:
+            win.blit(char, (self.x, self.y))
 
 #functions
 def redrawGameWindow():
-    global WalkCount
-    
     win.blit(bg, (0,0)) 
-    if WalkCount + 1 >= 27:
-        WalkCount = 0
-    if player_left:
-        win.blit(walkLeft[WalkCount//3], (starting_x, starting_y))
-        WalkCount += 1
-    elif player_right:
-        win.blit(walkRight[WalkCount//3], (starting_x, starting_y))
-        WalkCount += 1
-    else:
-        win.blit(char, (starting_x, starting_y))
+    player.draw(win)
     pygame.display.update()
 
+
+player = Player(300, 410, 64, 64) #64 x 64 is the size of the character sprite
 
 run = True
 
@@ -59,39 +63,35 @@ while run:
     
     #movement keys
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and starting_x > vel:
-        starting_x -= vel
-        player_left = True
-        player_right = False
-    elif keys[pygame.K_RIGHT] and starting_x < screenWidth - width - vel:
-        starting_x += vel
-        player_left = False
-        player_right = True
+    if keys[pygame.K_LEFT] and player.x > player.vel:
+        player.x -= player.vel
+        player.left = True
+        player.right = False
+    elif keys[pygame.K_RIGHT] and player.x < screenWidth - player.width - player.vel:
+        player.x += player.vel
+        player.left = False
+        player.right = True
     else:
-        player_left = False
-        player_right = False
-        WalkCount = 0
-    if (not isJump):
-        # if keys[pygame.K_UP] and starting_y > vel:
-        #     starting_y -= vel
-        # if keys[pygame.K_DOWN] and starting_y < screenHeight - height - vel:
-        #     starting_y += vel
-        if keys[pygame.K_SPACE] and not isJump:
-            isJump = True
-            player_right = False
-            player_left = False
-            WalkCount = 0
+        player.left = False
+        player.right = False
+        player.walkCount = 0
+    if (not player.isJump):
+        if keys[pygame.K_SPACE] and not player.isJump:
+            player.isJump = True
+            player.right = False
+            player.left = False
+            player.walkCount = 0
     else:
-        if jumpCount >= -10:
+        if player.jumpCount >= -10:
             neg = 1
-            if jumpCount < 0:
+            if player.jumpCount < 0:
                 neg = -1
-            starting_y -= (jumpCount ** 2) * 0.5 * neg
-            jumpCount -= 1
+            player.y -= (player.jumpCount ** 2) * 0.5 * neg
+            player.jumpCount -= 1
             
         else:
-            isJump = False
-            jumpCount = 10
+            player.isJump = False
+            player.jumpCount = 10
 
     #added func
     redrawGameWindow()
