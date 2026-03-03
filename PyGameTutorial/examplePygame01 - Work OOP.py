@@ -31,6 +31,7 @@ class Player(object):
         self.right = False
         self.walkCount = 0
         self.standing = True
+        self.hitbox = (self.x + 20, self.y, 28, 60)
 
     def draw(self, win):
         if self.walkCount + 1 >= 27:
@@ -50,26 +51,68 @@ class Player(object):
 
 class Projectile(object):
     def __init__(self, x, y, radius, color, facing):
+        bullet_vel = 8
         self.x = x
         self.y = y
         self.radius = radius
         self.color = color
         self.facing = facing
-        self.vel = 8 * facing
+        self.vel = bullet_vel * facing
     
     def draw(self, win):
         pygame.draw.circle(win, self.color, (self.x, self.y), self.radius)
+
+class Enemy(object):
+    walkRight = [pygame.image.load('Assets/Images/Sprites/R1E.png'), pygame.image.load('Assets/Images/Sprites/R2E.png'), pygame.image.load('Assets/Images/Sprites/R3E.png'), pygame.image.load('Assets/Images/Sprites/R4E.png'), pygame.image.load('Assets/Images/Sprites/R5E.png'), pygame.image.load('Assets/Images/Sprites/R6E.png'), pygame.image.load('Assets/Images/Sprites/R7E.png'), pygame.image.load('Assets/Images/Sprites/R8E.png'), pygame.image.load('Assets/Images/Sprites/R9E.png')]
+    walkLeft = [pygame.image.load('Assets/Images/Sprites/L1E.png'), pygame.image.load('Assets/Images/Sprites/L2E.png'), pygame.image.load('Assets/Images/Sprites/L3E.png'), pygame.image.load('Assets/Images/Sprites/L4E.png'), pygame.image.load('Assets/Images/Sprites/L5E.png'), pygame.image.load('Assets/Images/Sprites/L6E.png'), pygame.image.load('Assets/Images/Sprites/L7E.png'), pygame.image.load('Assets/Images/Sprites/L8E.png'), pygame.image.load('Assets/Images/Sprites/L9E.png')]
+
+    def __init__(self, x, y, width, height, end):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.end = end
+        self.walkCount = 0
+        self.vel = 3
+        self.path = [self.x, self.end]
+
+    def draw(self, win):
+        self.move()
+        if self.walkCount + 1 >= 27:
+            self.walkCount = 0
+        if self.vel > 0:
+            win.blit(self.walkRight[self.walkCount //3], (self.x, self.y))
+            self.walkCount += 1
+        else:
+            win.blit(self.walkLeft[self.walkCount //3], (self.x, self.y))
+            self.walkCount += 1
+
+    def move(self):
+        if self.vel > 0:
+            if self.x + self.vel < self.path[1]:
+                self.x += self.vel
+            else:
+                self.vel = self.vel * -1
+                self.walkCount = 0
+        else:
+            if self.x - self.vel > self.path[0]:
+                self.x += self.vel
+            else:
+                self.vel = self.vel * -1
+                self.walkCount = 0
 
 #functions
 def redrawGameWindow():
     win.blit(bg, (0,0)) 
     player.draw(win)
+    enemy.draw(win)
     for bullet in bullets:
         bullet.draw(win)
     pygame.display.update()
 
 
 player = Player(300, 410, 64, 64) #64 x 64 is the size of the character sprite
+enemy = Enemy(100, 410, 64, 64, 450) #64 x 64 is the size of the character sprite, 450 is the end point of the enemy's path
 bullets = []
 
 run = True
