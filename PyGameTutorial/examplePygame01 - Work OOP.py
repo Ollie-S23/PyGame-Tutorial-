@@ -105,6 +105,9 @@ class Enemy(object):
             else:
                 self.vel = self.vel * -1
                 self.walkCount = 0
+    
+    def hit(self):
+        print('hit')
 
 #functions
 def redrawGameWindow():
@@ -118,6 +121,8 @@ def redrawGameWindow():
 
 player = Player(300, 410, 64, 64) #64 x 64 is the size of the character sprite
 enemy = Enemy(100, 410, 64, 64, 450) #64 x 64 is the size of the character sprite, 450 is the end point of the enemy's path
+
+shootLoop = 0
 bullets = []
 
 run = True
@@ -125,11 +130,22 @@ run = True
 #main loop
 while run:
     clock.tick(27) #FPS
+
+    if shootLoop > 0:
+        shootLoop += 1
+    if shootLoop > 10:
+        shootLoop = 0
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
     
     for bullet in bullets:
+        if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
+            if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
+                enemy.hit()
+                bullets.pop(bullets.index(bullet))
+
         if bullet.x < screenWidth and bullet.x > 0:
             bullet.x += bullet.vel
         else:
@@ -137,7 +153,7 @@ while run:
 
     #shooting keys
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_SPACE]:
+    if keys[pygame.K_SPACE] and shootLoop == 0:
         bullet_amount = 5
         if player.left:
                 facing = -1
@@ -146,6 +162,7 @@ while run:
         if len(bullets) < bullet_amount:
             bullet_radius = 6
             bullets.append(Projectile(round(player.x + player.width // 2), round(player.y + player.height // 2), bullet_radius, (0,0,0), facing))
+            shootLoop = 1
 
     #movement keys
     keys = pygame.key.get_pressed()
