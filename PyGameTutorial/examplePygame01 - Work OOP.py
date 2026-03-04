@@ -51,7 +51,8 @@ class Player(object):
             else:
                 win.blit(walkLeft[0], (self.x, self.y))
         self.hitbox = (self.x + 17, self.y + 11, 29, 52)
-        pygame.draw.rect(win, (255,0,0), self.hitbox, 2)
+        #draws rectagle hit box
+        #pygame.draw.rect(win, (255,0,0), self.hitbox, 2)
 
 class Projectile(object):
     def __init__(self, x, y, radius, color, facing):
@@ -80,19 +81,28 @@ class Enemy(object):
         self.vel = 3
         self.path = [self.x, self.end]
         self.hitbox = (self.x + 17, self.y + 2, 31, 57)
+        self.health = 10 
+        self.visible = True
 
     def draw(self, win):
-        self.move()
-        if self.walkCount + 1 >= 27:
-            self.walkCount = 0
-        if self.vel > 0:
-            win.blit(self.walkRight[self.walkCount //3], (self.x, self.y))
-            self.walkCount += 1
-        else:
-            win.blit(self.walkLeft[self.walkCount //3], (self.x, self.y))
-            self.walkCount += 1
-        self.hitbox = (self.x + 17, self.y + 2, 31, 57)
-        pygame.draw.rect(win, (255,0,0), self.hitbox, 2)
+        if self.visible:
+            self.move()
+        if self.visible: 
+            if self.walkCount + 1 >= 27:
+                self.walkCount = 0
+            if self.vel > 0:
+                win.blit(self.walkRight[self.walkCount //3], (self.x, self.y))
+                self.walkCount += 1
+            else:
+                win.blit(self.walkLeft[self.walkCount //3], (self.x, self.y))
+                self.walkCount += 1
+            self.hitbox = (self.x + 17, self.y + 2, 31, 57)
+
+            pygame.draw.rect(win, (255,0,0), (self.hitbox[0], self.hitbox[1] - 20, 50, 10)) #health bar
+            pygame.draw.rect(win, (0, 128,0), (self.hitbox[0], self.hitbox[1] - 20, 50 - (5 * (10 - self.health)), 10)) #health bar
+
+        #draw rectagle hit box
+        #pygame.draw.rect(win, (255,0,0), self.hitbox, 2)
 
     def move(self):
         if self.vel > 0:
@@ -109,6 +119,10 @@ class Enemy(object):
                 self.walkCount = 0
     
     def hit(self):
+        if self.health > 0:
+            self.health -= 1
+        else:
+            self.visible = False
         print('hit')
 
 #functions
@@ -148,11 +162,12 @@ while run:
             run = False
     
     for bullet in bullets:
-        if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
-            if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
-                enemy.hit()
-                score += 1
-                bullets.pop(bullets.index(bullet))
+        if enemy.visible:
+            if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
+                if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
+                    enemy.hit()
+                    score += 1
+                    bullets.pop(bullets.index(bullet))
 
         if bullet.x < screenWidth and bullet.x > 0:
             bullet.x += bullet.vel
