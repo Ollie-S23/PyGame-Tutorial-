@@ -17,6 +17,8 @@ char = pygame.image.load('Assets/Images/Sprites/standing.png')
 
 clock = pygame.time.Clock()
 
+score = 0
+
 class Player(object):
     def __init__(self, x, y, width, height):
         self.x = x #left and right
@@ -112,6 +114,8 @@ class Enemy(object):
 #functions
 def redrawGameWindow():
     win.blit(bg, (0,0)) 
+    text = font.render('Score: ' + str(score), 1, (0,0,0))
+    win.blit(text, (390, 10))
     player.draw(win)
     enemy.draw(win)
     for bullet in bullets:
@@ -126,6 +130,9 @@ shootLoop = 0
 bullets = []
 
 run = True
+
+#                                           bold   italic
+font = pygame.font.SysFont('comicsans', 15, True, False)
 
 #main loop
 while run:
@@ -144,6 +151,7 @@ while run:
         if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
             if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
                 enemy.hit()
+                score += 1
                 bullets.pop(bullets.index(bullet))
 
         if bullet.x < screenWidth and bullet.x > 0:
