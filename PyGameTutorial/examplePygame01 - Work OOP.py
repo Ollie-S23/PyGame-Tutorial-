@@ -15,6 +15,12 @@ walkLeft = [pygame.image.load('Assets/Images/Sprites/L1.png'), pygame.image.load
 bg = pygame.image.load('Assets/Images/bg.jpg')
 char = pygame.image.load('Assets/Images/Sprites/standing.png')
 
+#sounds
+bulletSound = pygame.mixer.Sound('Assets/Music/bullet.wav')
+hitSound = pygame.mixer.Sound('Assets/Music/hit.wav')
+music = pygame.mixer.music.load('Assets/Music/music.mp3')
+pygame.mixer.music.play(-1) #plays music on loop
+
 clock = pygame.time.Clock()
 
 score = 0
@@ -165,6 +171,7 @@ while run:
         if enemy.visible:
             if bullet.y - bullet.radius < enemy.hitbox[1] + enemy.hitbox[3] and bullet.y + bullet.radius > enemy.hitbox[1]:
                 if bullet.x + bullet.radius > enemy.hitbox[0] and bullet.x - bullet.radius < enemy.hitbox[0] + enemy.hitbox[2]:
+                    hitSound.play()
                     enemy.hit()
                     score += 1
                     bullets.pop(bullets.index(bullet))
@@ -177,6 +184,7 @@ while run:
     #shooting keys
     keys = pygame.key.get_pressed()
     if keys[pygame.K_SPACE] and shootLoop == 0:
+        bulletSound.play()
         bullet_amount = 5
         if player.left:
                 facing = -1
