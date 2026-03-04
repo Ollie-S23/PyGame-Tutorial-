@@ -59,6 +59,43 @@ class Player(object):
         self.hitbox = (self.x + 17, self.y + 11, 29, 52)
         #draws rectagle hit box
         #pygame.draw.rect(win, (255,0,0), self.hitbox, 2)
+    
+    def hit(self):
+        self.x = 100
+        self.y = 410
+        self.walkCount = 0
+
+        font1 = pygame.font.SysFont('comicsans', 100)
+        text = font1.render('-5', 1, (255, 0, 0))
+
+        # centered text position
+        text_x = (screenWidth / 2) - (text.get_width() / 2)
+        text_y = (screenHeight / 2) - (text.get_height() / 2)
+
+        i = 0
+        while i < 30:  # ~30 frames at 27 fps = about 1.1  seconds
+            pygame.time.delay(10)
+            i += 1
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return
+
+            # redraw the whole frame so the text is actually visible
+            win.blit(bg, (0, 0))
+            text_score = font.render('Score: ' + str(score), 1, (0, 0, 0))
+            win.blit(text_score, (390, 10))
+
+            self.draw(win)
+            enemy.draw(win)
+
+            for bullet in bullets:
+                bullet.draw(win)
+
+            win.blit(text, (text_x, text_y))
+            pygame.display.update()
+            
 
 class Projectile(object):
     def __init__(self, x, y, radius, color, facing):
@@ -157,6 +194,12 @@ font = pygame.font.SysFont('comicsans', 15, True, False)
 #main loop
 while run:
     clock.tick(27) #FPS
+
+    if player.hitbox[1] < enemy.hitbox[1] + enemy.hitbox[3] and player.hitbox[1] + player.hitbox[3]> enemy.hitbox[1]:
+        if player.hitbox[0] + player.hitbox[2] > enemy.hitbox[0] and player.hitbox[0] < enemy.hitbox[0] + enemy.hitbox[2]:
+            player.hit()
+            score -= 5
+
 
     if shootLoop > 0:
         shootLoop += 1
